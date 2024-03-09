@@ -42,21 +42,29 @@
 import { AiOutlineClose } from "react-icons/ai";
 import { createPortal } from "react-dom";
 
-const Modal = ({ onClose, isOpen, task, setTask, setTasks }) => {
-
+const Modal = ({ onClose, isOpen, task,tasks, setTask, setTasks ,id}) => {
 
 
   const handleUpdateTask = () => {
-    // Update the specific task with the new details and call the onUpdateTask callback
-    onUpdateTask({ ...task, name: task.name, status: task.status, description: task.description });
-    onClose(); // Close the modal after updating
+
+  //   localStorage.setItem('task', JSON.stringify(task));
+  //   setTasks(task);
+  //   onClose(); // Close the modal after updating
+
+  //  console.log(task);
+
+    
   };
 
-  const handleDeleteTask = () => {
-    // Delete the task from the tasks array and call the onDeleteTask callback
-    onDeleteTask(task.id);
-    onClose(); // Close the modal after deleting
+  const handleDeleteTask = (id) => {
+    // const updatedTasks = (tasks).filter((t) => t.id !== id);
+    // setTasks(updatedTasks);
+
+    // localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+    // toast.success('Task removed successfully');
   };
+  
+  
 
   return (
     createPortal(
@@ -89,7 +97,7 @@ const Modal = ({ onClose, isOpen, task, setTask, setTasks }) => {
             </form>
             <div className="flex justify-end ">
               <button onClick={handleUpdateTask} className="bg-[#a3e635] rounded-md mx-8 pl-2 pr-2" >Update</button>
-              <button onClick={handleDeleteTask}className="bg-[#ef4444] rounded-md mx-8 pl-2 pr-2">Delete</button>
+              <button onClick={handleDeleteTask(task.id)}className="bg-[#ef4444] rounded-md mx-8 pl-2 pr-2">Delete</button>
             </div>
           </div>
         </div>

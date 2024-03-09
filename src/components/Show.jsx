@@ -1,39 +1,43 @@
 // Show.js
 import React, { useState, useEffect } from 'react';
 import Modal from './Modal';
+import { useDrag, useDrop } from 'react-dnd';
 
 const Show = ({ tasks, setTasks }) => {
   const [selectedTask, setSelectedTask] = useState(null);
-  const [todos, setTodos] = useState([]);
+  const [notstarted, setnotStarted] = useState([]);
   const [inProgress, setInProgress] = useState([]);
-  const [closed, setClosed] = useState([]);
-
-
+  const [completed, setcompleted] = useState([]);
 
   const handleUpdateTask = (updatedTask) => {
-    const updatedTasks = tasks.map((task) => (task.id === updatedTask.id ? updatedTask : task));
+    const updatedTasks = tasks.map((t) => (t.id === updatedTask.id ? updatedTask : t));
+    localStorage.setItem('tasks', JSON.stringify(updatedTasks));
     setTasks(updatedTasks);
     setSelectedTask(null); // Close the modal after updating
   };
+
   const handleDeleteTask = (taskId) => {
-    const updatedTasks = tasks.filter((task) => task.id !== taskId);
+    const updatedTasks = tasks.filter((t) => t.id !== taskId);
+    localStorage.setItem('tasks', JSON.stringify(updatedTasks));
     setTasks(updatedTasks);
     setSelectedTask(null); // Close the modal after deleting
   };
 
+  
+
   useEffect(() => {
     if (tasks && Array.isArray(tasks)) {
-      const ftodos = tasks.filter((task) => task.status === "todo");
+      const fnotStarted = tasks.filter((task) => task.status === "notstarted");
       const finProgress = tasks.filter((task) => task.status === "inprogress");
-      const fclosed = tasks.filter((task) => task.status === "closed");
+      const fcompleted = tasks.filter((task) => task.status === "completed");
 
-      setTodos(ftodos);
+      setnotStarted(fnotStarted);
       setInProgress(finProgress);
-      setClosed(fclosed);
+      setcompleted(fcompleted);
     }
   }, [tasks]);
 
-  const statues = ["todo", "inprogress", "closed"];
+  const statues = ["notstarted", "inprogress", "completed"];
 
   const handleTaskClick = (task) => {
     setSelectedTask(task);
@@ -47,45 +51,81 @@ const Show = ({ tasks, setTasks }) => {
           status={status}
           tasks={tasks}
           setTasks={setTasks}
-          todos={todos}
+          notStarted={notstarted}
           inProgress={inProgress}
-          closed={closed}
+          completed={completed}
           onTaskClick={handleTaskClick}
-          onUpdateTask={handleUpdateTask}
+          onUpdateTask={handleUpdateTask} // Pass the handleUpdateTask function
           onDeleteTask={handleDeleteTask}
         />
       ))}
-       <Modal
+       <Modal  
         onClose={() => setSelectedTask(null)}
         isOpen={selectedTask !== null}
+        tasks={tasks}
         task={selectedTask}
         setTask={setSelectedTask}
-        onUpdateTask={handleUpdateTask}
-        onDeleteTask={handleDeleteTask}
+        id={tasks.id}
+
+
+      
       />
     </div>
   );
 };
 
-const Section = ({ status, tasks, setTasks, todos, inProgress, closed, onTaskClick }) => {
-  let text = "todo";
+const Section = ({ status, tasks, setTasks, notStarted, inProgress, completed, onTaskClick }) => {
+
+
+
+  const [{ isOver }, drop] = useDrop(() => ({
+    accept:"task",
+
+    drop:(item)=>additemtoselection(item.id),
+    collect: (monitor) => ({
+      isOver: !!monitor.isOver()
+    }),
+  }));
+
+
+  let text = "notstarted";
   let bg = "bg-[#f87171]";
-  let taskstomap = todos;
+  let taskstomap = notStarted;
 
   if (status === "inprogress") {
     text = "inprogress";
     bg = "bg-[#fbbf24]";
     taskstomap = inProgress;
   }
-  if (status === "closed") {
-    text = "closed";
+  if (status === "completed") {
+    text = "completed";
     bg = "bg-[#a3e635]";
-    taskstomap = closed;
+    taskstomap = completed;
+  }
+
+  const additemtoselection = (id) => {
+    // console.log(id);
+    setTasks((prev) => {
+      const newtasks = prev.map((task) => {
+        if (task.id === id) {
+          return {
+            ...task,
+            status: status,
+          };
+        }
+        return task;
+      });
+      localStorage.setItem("tasks", JSON.stringify(newtasks));
+      return newtasks;
+
+    });
   }
 
   return (
     <>
-      <div className={`w-64`}>
+      <div ref={drop}
+      className={`w-64 rounded-md p-2 ${isOver?"bg-[#f3f4f6]":""}`} 
+      >
         <Header text={text} bg={bg} count={taskstomap.length} />
         {taskstomap.length >= 0 &&
           taskstomap.map((task) => (
@@ -122,10 +162,20 @@ const Task = ({ task, tasks, setTasks, onTaskClick }) => {
     onTaskClick(task);
   };
 
+
+
+  const [{ isDragging }, drag] = useDrag(() => ({
+    type:"task",
+    item:{id:task.id},
+    collect: (monitor) => ({
+      isDragging: !!monitor.isDragging()
+    }),
+  }));
+
   return (
     <>
-      <div 
-        className={`relative p-4 mt-3 shadow-md rounded-md cursor-grab bg-[#efefef]`}
+      <div  ref={drag}
+        className={`relative p-4 mt-3 shadow-md rounded-md ${isDragging?"opacity-20":"opacity-100"} cursor-grab bg-[#efefef]`}
         onClick={handleTaskClick}
       >
         <p>{task.name}</p>

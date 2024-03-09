@@ -4,11 +4,10 @@ import { useState } from 'react';
 import { toast } from 'react-toastify';
 
 const Add = ({ tasks, setTasks }) => {
-
     const [task, setTask] = useState({
-        id: '',
         name: '',
-        status: 'todo',
+        status: 'notstarted',
+        description: '',
     });
 
     const handleSubmit = (e) => {
@@ -18,16 +17,13 @@ const Add = ({ tasks, setTasks }) => {
             toast.error('Task name should be at least 3 characters long');
             return;
         }
-
+            
         const newTask = { ...task, id: uuidv4() };
+        const updatedTasks = [...tasks, newTask];
+        localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+        setTasks(updatedTasks);
 
-        setTasks((prev) => {
-            const updatedTasks = [...prev, newTask];
-            localStorage.setItem('tasks', JSON.stringify(updatedTasks));
-            return updatedTasks;
-        });
-
-        setTask({ id: '', name: '', status: 'todo' });
+        setTask({ name: '', status: 'notstarted' });
         toast.success('Task added successfully');
     };
 
@@ -35,9 +31,9 @@ const Add = ({ tasks, setTasks }) => {
         <form onSubmit={handleSubmit}>
             <input
                 type="text"
-                className='border-2 border-slate-400 bg bg-slate-100 rounded-md mr-4 h-12 w-64 px-1'
+                className='border-2 border-slate-400 bg-slate-100 rounded-md mr-4 h-12 w-64 px-1'
                 value={task.name}
-                onChange={(e) => setTask({ ...task, name: e.target.value ,id: uuidv4()  })}
+                onChange={(e) => setTask({ ...task, name: e.target.value })}
             />
             <button className='bg-cyan-500 rounded-md px-4 h-12'>Add</button>
         </form>

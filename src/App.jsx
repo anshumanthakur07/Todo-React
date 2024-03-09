@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
-import Completed from "./components/Completed";
-import Notstarted from "./components/Notstarted";
-import Started from "./components/Started";
 import Show from "./components/Show";
 import Add from "./components/Add";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { HTML5Backend } from 'react-dnd-html5-backend'
+import { DndProvider } from 'react-dnd'
 
 const App = () => {
   const [tasks, setTasks] = useState([]);
@@ -26,12 +25,16 @@ const App = () => {
 
   return (
     <>
+
+
+    <DndProvider backend={HTML5Backend}>
+    
       <ToastContainer/>
       <div className="bg-[#e5e7eb] w-screen h-screen flex flex-col items-center gap-16 pt-32">
         <Add tasks={tasks} setTasks={setTasks}/> 
         <Show tasks={tasks} setTasks={setTasks}/>
-        {/* <Started tasks={tasks} setTasks={setTasks}/> */}
       </div>
+      </DndProvider>
     
     </>
   );
