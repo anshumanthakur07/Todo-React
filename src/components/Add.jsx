@@ -31,7 +31,8 @@ const Add = ({ tasks, setTasks }) => {
         <form onSubmit={handleSubmit}>
             <input
                 type="text"
-                className='border-2 border-slate-400 bg-slate-100 rounded-md mr-4 h-12 w-64 px-1'
+                className='border-2 border-slate-400 bg-slate-100  rounded-md mr-4 h-12 w-64 px-3'
+                placeholder="Add Task"
                 value={task.name}
                 onChange={(e) => setTask({ ...task, name: e.target.value })}
             />
