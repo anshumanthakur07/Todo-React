@@ -8,19 +8,13 @@ const Modal = ({ onClose, isOpen, task, tasks, setTask, setTasks, id }) => {
   
     const updatedTask = {
       id: id,
-      name: e.target.elements.name.value,
-      status: e.target.elements.status.value,
-      description: e.target.elements.description.value,
+      name: task.name,
+      status: task.status,
+      description: task.description,
     };
   
     setTasks(prevTasks => {
-      const updatedTasks = prevTasks.map(task => {
-        if (task.id === id) {
-          return updatedTask;
-        }
-        return task;
-      });
-  
+      const updatedTasks = prevTasks.map(task => task.id === id ? updatedTask : task);
       localStorage.setItem("tasks", JSON.stringify(updatedTasks));
       return updatedTasks;
     });
@@ -40,6 +34,7 @@ const Modal = ({ onClose, isOpen, task, tasks, setTask, setTasks, id }) => {
     toast.success("Task deleted successfully");
     onClose();
   };
+ 
 
   return createPortal(
     isOpen && (
@@ -58,7 +53,7 @@ const Modal = ({ onClose, isOpen, task, tasks, setTask, setTasks, id }) => {
               placeholder="Task Title"
               name="name"
               value={task.name}
-              onChange={(e) => setTask({ ...task, [e.target.name]: e.target.value })}
+              onChange={(e) => setTask({ ...task, [e.target.name]: e.target.value ,name:e.target.value})}
             />
             <input
               className="bg-gray-100 p-2 rounded-md mb-2 my-5"
@@ -66,14 +61,14 @@ const Modal = ({ onClose, isOpen, task, tasks, setTask, setTasks, id }) => {
               placeholder="Task Status"
               name="status"
               value={task.status}
-              onChange={(e) => setTask({ ...task, [e.target.name]: e.target.value })}
+              onChange={(e) => setTask({ ...task, [e.target.name]: e.target.value ,status:e.target.value})}
             />
             <textarea
               className="bg-gray-100 p-2 rounded-md mb-2 my-10 h-32 w-full resize-none"
               placeholder="Task Description"
               name="description"
               value={task.description}
-              onChange={(e) => setTask({ ...task, [e.target.name]: e.target.value })}
+              onChange={(e) => setTask({ ...task, [e.target.name]: e.target.value ,description:e.target.value})  }
             ></textarea>
           </form>
           <div className="flex justify-end">
