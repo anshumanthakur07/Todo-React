@@ -65,6 +65,7 @@ const Show = ({ tasks, setTasks }) => {
         tasks={tasks}
         task={selectedTask}
         setTask={setSelectedTask}
+        setTasks={setTasks}
         id={tasks.id}
 
 
