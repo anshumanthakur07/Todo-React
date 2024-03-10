@@ -14,7 +14,7 @@ const Add = ({ tasks, setTasks }) => {
         e.preventDefault();
 
         if (task.name.length < 3) {
-            toast.error('Task name should be at least 3 characters long');
+            toast.error('Task name should be at least 3 characters long',{autoClose:2000});
             return;
         }
             
@@ -24,7 +24,7 @@ const Add = ({ tasks, setTasks }) => {
         setTasks(updatedTasks);
 
         setTask({ name: '', status: 'notstarted' });
-        toast.success('Task added successfully');
+        toast.success('Task added successfully',{autoClose:2000});
     };
 
     return (

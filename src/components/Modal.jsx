@@ -19,7 +19,7 @@ const Modal = ({ onClose, isOpen, task, tasks, setTask, setTasks, id }) => {
       return updatedTasks;
     });
   
-    toast.success("Task updated successfully");
+    toast.success("Task updated successfully",{autoClose:2000});
     onClose(); // Close the modal after updating
   };
   
@@ -31,7 +31,7 @@ const Modal = ({ onClose, isOpen, task, tasks, setTask, setTasks, id }) => {
       localStorage.setItem("tasks", JSON.stringify(newtasks));
       return newtasks;
     });
-    toast.success("Task deleted successfully");
+    toast.success("Task deleted successfully",{autoClose:2000});
     onClose();
   };
  
